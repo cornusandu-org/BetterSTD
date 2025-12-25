@@ -2,19 +2,16 @@
 #include <cstdint>
 
 namespace bstd {
-    namespace random {
+namespace random {
 
-        using uniform_fn = double (*)();
-        using randint_fn = uint64_t (*)(uint64_t, uint64_t);
+    // Core RNG API
+    double uniform();
+    uint64_t randint(uint64_t min, uint64_t max);
 
-        extern uniform_fn uniform;
-        extern randint_fn randint;
-
-        namespace crypto {
-            extern uniform_fn uniform;
-            extern randint_fn randint;
-        }
-
-        void load(const char* so_path);
+    namespace crypto {
+        double uniform();
+        uint64_t randint(uint64_t min, uint64_t max);
     }
-}
+
+} // namespace random
+} // namespace bstd
