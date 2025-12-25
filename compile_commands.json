@@ -1,0 +1,28 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-Wall",
+      "-O0",
+      "-Iinclude/bstd",
+      "-std=c++14",
+      "-c",
+      "./src/memory.cpp"
+    ],
+    "directory": "/home/kali/projects/bstd",
+    "file": "/home/kali/projects/bstd/src/memory.cpp"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-Wall",
+      "-O0",
+      "-Iinclude/bstd",
+      "-std=c++14",
+      "-c",
+      "./src/rand.cpp"
+    ],
+    "directory": "/home/kali/projects/bstd",
+    "file": "/home/kali/projects/bstd/src/rand.cpp"
+  }
+]

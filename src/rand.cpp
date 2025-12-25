@@ -1,13 +1,52 @@
-#include <cstdint>
+#include "rand.hpp"
+
 #include <cstdlib>
 #include <ctime>
+#include <limits>
+#include <stdexcept>
 
-#define EXPORT extern "C" __attribute__((visibility("default")))
+namespace {
 
-EXPORT double uniform() {
-    return ((double)std::rand()) / (double)RAND_MAX;
+    // One-time initialization
+    struct rng_init {
+        rng_init() {
+            std::srand(static_cast<unsigned>(std::time(nullptr)));
+        }
+    };
+
+    rng_init init_guard;
+
 }
 
-EXPORT uint64_t randint(uint64_t min, uint64_t max) {
-    return (uint64_t)((uniform()) * (max - min + 1) + min);
+namespace bstd {
+namespace random {
+
+    double uniform() {
+        return static_cast<double>(std::rand())
+             / static_cast<double>(RAND_MAX);
+    }
+
+    uint64_t randint(uint64_t min, uint64_t max) {
+        if (min > max) {
+            return min; // or swap, or assert — your policy
+        }
+
+        double u = uniform();
+        uint64_t range = max - min + 1;
+        return static_cast<uint64_t>(u * range) + min;
+    }
+
+    namespace crypto {
+
+        double uniform() {
+            std::runtime_error("Cryptographically secure PRNG is not yet implemented. Please use non-crypto implementations, or use an external library.");
+        }
+
+        uint64_t randint(uint64_t min, uint64_t max) {
+            std::runtime_error("Cryptographically secure PRNG is not yet implemented. Please use non-crypto implementations, or use an external library.");
+        }
+
+    }
+
+}
 }
