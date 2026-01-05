@@ -1,4 +1,5 @@
 CC = g++
+CC_WIN = x86_64-w64-mingw32-g++  # Install if you dont have it; replace with g++ if youre on Windows
 CAR = gcc-ar
 CXXFLAGS = -Wall -O0 -Iinclude/bstd -std=c++14
 
@@ -10,10 +11,12 @@ all: build
 	@printf "\n===== Linking =====\n"
 	@printf "\n"
 	@printf "[/] Creating static archive\r"
-	@{ $(CAR) rcs bstd.a $(shell find ./tmp/loc -name "*.o") 2>rcs.log; } || { printf "[-] Failed to create static archive\n\n"; cat rcs.log; exit 1; } 
+	@{ $(CAR) rcs bstd.a $(shell find ./tmp -name "*.o") 2>rcs.log; } || { printf "[-] Failed to create static archive\n\n"; cat rcs.log; exit 1; } 
+	@{ $(CAR) rcs bstd_win.a $(shell find ./tmp -name "*.o") 2>rcs.log; } || { printf "[-] Failed to create static archive\n\n"; cat rcs.log; exit 1; } 
 	@printf "[+] Created static archive         \n"
 	@mkdir -p dist
-	@mv bstd.a dist/
+	@mv bstd.a dist/bstd_linux.a
+	@mv bstd_win.a dist/bstd_win.a
 	@$(MAKE) --no-print-directory clean
 
 build:
@@ -22,6 +25,7 @@ build:
 	@for item in $(SOURCES); do \
 		printf "[/] Building $$item\r"; \
 		{ $(CC) $(CXXFLAGS) -c $$item 2>log.txt; } || { printf "[-] Failed to build $$item        \n\n"; cat log.txt; exit 1;}; \
+		{ $(CC_WIN) $(CXXFLAGS) -c $${item} -o $${item}_win 2>log.txt; } || { printf "[-] Failed to build $$item        \n\n"; cat log.txt; exit 1;}; \
 		printf "[+] Built $$item          \n"; \
 	done
 	@mv *.o tmp/

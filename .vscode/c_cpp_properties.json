@@ -15,6 +15,26 @@
             "intelliSenseMode": "linux-gcc-x64",
             "compileCommands": "${workspaceFolder}/compile_commands.json",
             "configurationProvider": "ms-vscode.makefile-tools"
+        },
+        {
+            "name": "Windows-x86_64",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/include/bstd",
+                "${workspaceFolder}/include",
+                "/usr/x86_64-w64-mingw32/include",
+                "/usr/x86_64-w64-mingw32/include/c++"
+            ],
+            "defines": [
+                "_WIN32",
+                "_WIN64"
+            ],
+            "compilerPath": "/usr/bin/x86_64-w64-mingw32-g++",
+            "cStandard": "c17",
+            "cppStandard": "c++14",
+            "intelliSenseMode": "windows-gcc-x64",
+            "compileCommands": "${workspaceFolder}/compile_commands.json",
+            "configurationProvider": "ms-vscode.makefile-tools"
         }
     ],
     "version": 4
