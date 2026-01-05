@@ -15,6 +15,7 @@
             "intelliSenseMode": "linux-gcc-x64",
             "compileCommands": "${workspaceFolder}/compile_commands.json",
             "configurationProvider": "ms-vscode.makefile-tools"
+<<<<<<< HEAD
         },
         {
             "name": "Windows-x86_64",
@@ -35,6 +36,8 @@
             "intelliSenseMode": "windows-gcc-x64",
             "compileCommands": "${workspaceFolder}/compile_commands.json",
             "configurationProvider": "ms-vscode.makefile-tools"
+=======
+>>>>>>> 283dceaf3b28aeaf43094b925e710a057062cfcd
         }
     ],
     "version": 4
