@@ -1,7 +1,7 @@
 CC = g++
 CC_WIN = x86_64-w64-mingw32-g++  # Install if you dont have it; replace with g++ if youre on Windows
 CAR = gcc-ar
-CXXFLAGS = -Wall -O0 -Iinclude/bstd -std=c++14
+CXXFLAGS = -Wall -O0 -Iinclude/bstd -std=c++14 -Iinclude
 
 SOURCES := $(shell find ./src -name "*.cpp")
 
@@ -15,12 +15,8 @@ all: build
 	@{ $(CAR) rcs bstd_win.a $(shell find ./tmp -name "*.o") 2>rcs.log; } || { printf "[-] Failed to create static archive\n\n"; cat rcs.log; exit 1; } 
 	@printf "[+] Created static archive         \n"
 	@mkdir -p dist
-<<<<<<< HEAD
 	@mv bstd.a dist/bstd_linux.a
 	@mv bstd_win.a dist/bstd_win.a
-=======
-	@mv bstd.a dist/
->>>>>>> 283dceaf3b28aeaf43094b925e710a057062cfcd
 	@$(MAKE) --no-print-directory clean
 
 build:
@@ -29,10 +25,7 @@ build:
 	@for item in $(SOURCES); do \
 		printf "[/] Building $$item\r"; \
 		{ $(CC) $(CXXFLAGS) -c $$item 2>log.txt; } || { printf "[-] Failed to build $$item        \n\n"; cat log.txt; exit 1;}; \
-<<<<<<< HEAD
-		{ $(CC_WIN) $(CXXFLAGS) -c $${item} -o $${item}_win 2>log.txt; } || { printf "[-] Failed to build $$item        \n\n"; cat log.txt; exit 1;}; \
-=======
->>>>>>> 283dceaf3b28aeaf43094b925e710a057062cfcd
+		{ $(CC_WIN) $(CXXFLAGS) -c $${item} -o $${item}_win.o 2>log.txt; } || { printf "[-] Failed to build $$item        \n\n"; cat log.txt; exit 1;}; \
 		printf "[+] Built $$item          \n"; \
 	done
 	@mv *.o tmp/
@@ -42,8 +35,9 @@ devtest:
 
 clean:
 	@rm -f *.o
+	@rm -f $(shell find . -name "*.o")
 	@rm -f ./*log*
 
 clear: clean
-	@rm -rf $(shell find . -name '.a') $(shell find . -name '.so') $(shell find ./tmp)
-	@rm test
+	@rm -rf $(shell find ./dist -name '*.a') $(shell find ./tmp)
+	@rm -f test

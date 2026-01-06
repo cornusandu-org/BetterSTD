@@ -62,29 +62,35 @@ BOOL EnableLargePages(void)
 //    );
 //}
 
-void* alloc_mem(void* base, size_t size) {
+Pointer::Pointer(): p((void*)0) {};
+Pointer::Pointer(void* p): p(p) {};
+Pointer::operator volatile void*() const noexcept {return this->p;};
+Pointer::operator void*() const noexcept {return this->p;};
+#ifndef linx
+Pointer::operator PDWORD() const noexcept {return (PDWORD)this->p;};
+#endif
+
+Pointer alloc_mem(Pointer base, size_t size) {
     #ifdef linx
 
-    void* mem = mmap(base, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-
-    return mem;
+    void* mem = mmap((void*)base, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
 
     #else
 
-    void* mem = VirtualAlloc(base, size, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
-
-    return mem;
+    void* mem = VirtualAlloc((void*)base, size, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
 
     #endif
+
+    return Pointer(mem);
 }
 
-Page alloc_page(void* base, PageSize size) {
+Page alloc_page(Pointer base, PageSize size) {
     #ifdef linx
 
-    void* mem = mmap(base, (size_t)size, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANONYMOUS | (((size_t)size > 4096) ? (MAP_HUGETLB | ((size_t)size > 2097152 ? MAP_HUGE_1GB : MAP_HUGE_2MB)) : 0), -1, 0);
+    void* mem = mmap((void*)base, (size_t)size, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANONYMOUS | (((size_t)size > 4096) ? (MAP_HUGETLB | ((size_t)size > 2097152 ? MAP_HUGE_1GB : MAP_HUGE_2MB)) : 0), -1, 0);
 
     Page page{
-        .location = mem,
+        .location = Pointer(mem),
         .size = size
     };
 
@@ -94,10 +100,10 @@ Page alloc_page(void* base, PageSize size) {
 
     EnableLargePages();
 
-    void* mem = VirtualAlloc(base, (size_t)size, MEM_RESERVE | MEM_COMMIT | (((size_t)size > 4096) ? MEM_LARGE_PAGES : 0), PAGE_EXECUTE_READWRITE);
+    void* mem = VirtualAlloc((void*)base, (size_t)size, MEM_RESERVE | MEM_COMMIT | (((size_t)size > 4096) ? MEM_LARGE_PAGES : 0), PAGE_EXECUTE_READWRITE);
 
     Page page{
-        .location = mem,
+        .location = Pointer(mem),
         .size = size
     };
 
@@ -106,14 +112,14 @@ Page alloc_page(void* base, PageSize size) {
     #endif
 }
 
-bool dealloc_mem(void* base, size_t len) {
+bool dealloc_mem(Pointer base, size_t len) {
     #ifdef linx
 
-    return munmap(base, len) == 0;
+    return munmap((void*)base, len) == 0;
 
     #else
 
-    return (bool)VirtualFree(base, len, MEM_RELEASE | MEM_DECOMMIT);
+    return (bool)VirtualFree((void*)base, len, MEM_RELEASE | MEM_DECOMMIT);
 
     #endif
 }
@@ -122,10 +128,21 @@ bool dealloc_page(const Page& page) {
     return dealloc_mem(page.location, (size_t)page.size);
 }
 
-bool protect_mem(void* base, size_t size, _MemProtect protect, _MemBehaviour behaviour, size_t *storePROT = 0, size_t *storeBEHAV = 0) {
+bool protect_mem(Pointer base, size_t size, _MemProtect protect, _MemBehaviour behaviour, size_t *storePROT = 0, size_t *storeBEHAV = 0) {
     #ifdef linx
 
-    return false;  // TODO: Implement this
+    size_t protection = 0;
+    size_t behav = 0;
+
+    if (protect & MemProtect::NONE)             protection |= PROT_NONE;
+    if (protect & MemProtect::READ)             protection |= PROT_READ;
+    if (protect & MemProtect::WRITE)            protection |= PROT_WRITE;
+    if (protect & MemProtect::EXECUTE)          protection |= PROT_EXEC;
+    if (behaviour & MemBehaviour::NOCACHE)      madvise((void*)base, size, MADV_DONTNEED);
+    if (behaviour & MemBehaviour::WRITECOMBINE) madvise((void*)base, size, MADV_WILLNEED);
+
+    if (storePROT) *storePROT = protection;
+    if (storeBEHAV) *storeBEHAV = behav;
 
     #else
 
@@ -166,7 +183,7 @@ bool protect_mem(void* base, size_t size, _MemProtect protect, _MemBehaviour beh
 
     DWORD a = 0;
 
-    return (bool)VirtualProtect(base, size, protection | behav, (PDWORD)&a);
+    return (bool)VirtualProtect((void*)base, size, protection | behav, (PDWORD)&a);
 
     #endif
 }

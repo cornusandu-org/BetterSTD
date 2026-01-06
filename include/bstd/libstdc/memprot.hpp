@@ -1,3 +1,10 @@
+#pragma once
+
+#include <cstdlib>
+
+using _MemProtect = size_t;
+using _MemBehaviour = size_t;
+
 namespace MemProtect {
     const constexpr _MemProtect NONE = 0;
     const constexpr _MemProtect READ = 0b1;
@@ -10,6 +17,3 @@ namespace MemBehaviour {
     const constexpr _MemBehaviour NOCACHE = 1 << 0;
     const constexpr _MemBehaviour WRITECOMBINE = 1 << 1;
 };
-
-using _MemProtect = size_t;
-using _MemBehaviour = size_t;
