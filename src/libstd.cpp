@@ -41,16 +41,37 @@ BOOL EnableLargePages(void)
 #include <sys/mman.h>
 #endif
 
+//constexpr MemProtect operator|(MemProtect a, MemProtect b) noexcept
+//{
+//    return static_cast<MemProtect>(
+//        static_cast<size_t>(a) | static_cast<size_t>(b)
+//    );
+//}
+//
+//constexpr MemProtect operator&(MemProtect a, MemProtect b) noexcept
+//{
+//    return static_cast<MemProtect>(
+//        static_cast<size_t>(a) & static_cast<size_t>(b)
+//    );
+//}
+//
+//constexpr MemProtect operator~(MemProtect a) noexcept
+//{
+//    return static_cast<MemProtect>(
+//        ~static_cast<size_t>(a)
+//    );
+//}
+
 void* alloc_mem(void* base, size_t size) {
     #ifdef linx
 
-    void* mem = mmap(base, size, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+    void* mem = mmap(base, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
 
     return mem;
 
     #else
 
-    void* mem = VirtualAlloc(base, size, MEM_RESERVE | MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+    void* mem = VirtualAlloc(base, size, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
 
     return mem;
 
@@ -83,4 +104,79 @@ Page alloc_page(void* base, PageSize size) {
     return page;
 
     #endif
+}
+
+bool dealloc_mem(void* base, size_t len) {
+    #ifdef linx
+
+    return munmap(base, len) == 0;
+
+    #else
+
+    return (bool)VirtualFree(base, len, MEM_RELEASE | MEM_DECOMMIT);
+
+    #endif
+}
+
+bool dealloc_page(const Page& page) {
+    return dealloc_mem(page.location, (size_t)page.size);
+}
+
+bool protect_mem(void* base, size_t size, _MemProtect protect, _MemBehaviour behaviour, size_t *storePROT = 0, size_t *storeBEHAV = 0) {
+    #ifdef linx
+
+    return false;  // TODO: Implement this
+
+    #else
+
+    size_t protection = 0;
+    size_t behav = 0;
+
+    switch (protect) {
+        case MemProtect::READ:
+            protection = PAGE_READONLY;
+            break;
+        case MemProtect::READ | MemProtect::WRITE:
+            protection = PAGE_READWRITE;
+            break;
+        case MemProtect::READ | MemProtect::EXECUTE:
+            protection = PAGE_EXECUTE_READ;
+            break;
+        case MemProtect::READ | MemProtect::WRITE | MemProtect::EXECUTE:
+            protection = PAGE_EXECUTE_READWRITE;
+            break;
+        case MemProtect::READ | MemProtect::WRITE | MemProtect::COPY:
+            protection = PAGE_WRITECOPY;
+            break;
+        case MemProtect::READ | MemProtect::EXECUTE | MemProtect::WRITE | MemProtect::COPY:
+            protection = PAGE_EXECUTE_WRITECOPY;
+            break;
+        case MemProtect::NONE:
+            protection = PAGE_NOACCESS;
+            break;
+        default:
+            return false;
+    }
+
+    if (behaviour & MemBehaviour::NOCACHE)        behav |= PAGE_NOCACHE;
+    if (behaviour & MemBehaviour::WRITECOMBINE)   behav |= PAGE_WRITECOMBINE;
+
+    if (storePROT) *storePROT = protection;
+    if (storeBEHAV) *storeBEHAV = behav;
+
+    DWORD a = 0;
+
+    return (bool)VirtualProtect(base, size, protection | behav, (PDWORD)&a);
+
+    #endif
+}
+
+bool protect_page(Page &page, _MemProtect protect, _MemBehaviour behaviour) {
+    size_t prot = 0;
+    size_t behav = 0;
+    bool s = protect_mem(page.location, (size_t)page.size, protect, behaviour, &prot, &behav);
+    page.prot = prot;
+    page.behaviour = behav;
+    
+    return s;
 }

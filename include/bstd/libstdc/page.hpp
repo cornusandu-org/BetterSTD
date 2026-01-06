@@ -1,3 +1,7 @@
+#pragma once
+
+#include "memprot.hpp"
+
 enum class PageSize {
     NORMAL = 4096,  // 4KiB
     LARGE = 2097152,  // 2MiB
@@ -7,4 +11,6 @@ enum class PageSize {
 struct Page {
     void* location;
     PageSize size;
+    _MemProtect prot = MemProtect::READ | MemProtect::WRITE;
+    _MemBehaviour behaviour = 0;
 };
