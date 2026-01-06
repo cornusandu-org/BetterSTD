@@ -13,6 +13,8 @@ class Pointer {
             explicit Pointer(void* p);
         explicit operator volatile void*() const noexcept;
         explicit operator void*() const noexcept;
+        bool operator ==(const Pointer& other) const noexcept;
+        bool isNull();
         #ifndef linx
         explicit operator PDWORD() const noexcept;
         #endif

@@ -65,6 +65,10 @@ BOOL EnableLargePages(void)
 Pointer::Pointer(): p((void*)0) {};
 Pointer::Pointer(void* p): p(p) {};
 Pointer::operator volatile void*() const noexcept {return this->p;};
+bool Pointer::operator ==(const Pointer& other) const noexcept {
+    return this->p == other.p;
+}
+bool Pointer::isNull() {return this->p == 0;};
 Pointer::operator void*() const noexcept {return this->p;};
 #ifndef linx
 Pointer::operator PDWORD() const noexcept {return (PDWORD)this->p;};
@@ -134,7 +138,7 @@ bool protect_mem(Pointer base, size_t size, _MemProtect protect, _MemBehaviour b
     size_t protection = 0;
     size_t behav = 0;
 
-    if (protect & MemProtect::NONE)             protection |= PROT_NONE;
+    if (protect == MemProtect::NONE)             protection |= PROT_NONE;
     if (protect & MemProtect::READ)             protection |= PROT_READ;
     if (protect & MemProtect::WRITE)            protection |= PROT_WRITE;
     if (protect & MemProtect::EXECUTE)          protection |= PROT_EXEC;
@@ -192,8 +196,8 @@ bool protect_page(Page &page, _MemProtect protect, _MemBehaviour behaviour) {
     size_t prot = 0;
     size_t behav = 0;
     bool s = protect_mem(page.location, (size_t)page.size, protect, behaviour, &prot, &behav);
-    page.prot = prot;
-    page.behaviour = behav;
+    page.prot = protect;
+    page.behaviour = behaviour;
     
     return s;
 }
