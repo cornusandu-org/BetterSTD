@@ -4,3 +4,4 @@
 #include "alloc.hpp"
 #include "memprot.hpp"
 #include "os.hpp"
+#include "conv.hpp"

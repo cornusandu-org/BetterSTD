@@ -8,12 +8,16 @@ class Pointer;
 #include "page.hpp"
 #include "memprot.hpp"
 #include "os.hpp"
+#include "conv.hpp"
 
-Pointer alloc_mem(Pointer base, size_t size);
-Page alloc_page(Pointer base, PageSize size = PageSize::NORMAL);
+#define POINT bstd::POINT
+#define BOOL bstd::BOOL
 
-bool dealloc_mem(Pointer base, size_t len);
-bool dealloc_page(const Page& page);
+POINT alloc_mem(POINT base, size_t size);
+Page alloc_page(POINT base, PageSize size = PageSize::NORMAL);
 
-bool protect_mem(Pointer base, size_t size, _MemProtect protect, _MemBehaviour behaviour);
-bool protect_page(Page page, _MemProtect protect, _MemBehaviour behaviour);
+BOOL dealloc_mem(POINT base, size_t len);
+BOOL dealloc_page(const Page& page);
+
+BOOL protect_mem(POINT base, size_t size, _MemProtect protect, _MemBehaviour behaviour);
+BOOL protect_page(Page page, _MemProtect protect, _MemBehaviour behaviour);

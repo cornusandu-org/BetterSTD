@@ -2,6 +2,9 @@
 #warning Building for Linux
 #define linx 1
 #elif defined(_WIN64) || defined(__CYGWIN__)
+
+#include <windows.h>
+
 #warning Building for Windows
 #if defined(_WIN32)
 #warning | Windows x32 -- may not be fully supported  !!
@@ -14,8 +17,6 @@
 #include "bstd/libstdc/libstdc.hpp"
 
 #ifndef linx
-#include <windows.h>
-
 BOOL EnableLargePages(void)
 {
     HANDLE token;
@@ -62,19 +63,19 @@ BOOL EnableLargePages(void)
 //    );
 //}
 
-Pointer::Pointer(): p((void*)0) {};
-Pointer::Pointer(void* p): p(p) {};
-Pointer::operator volatile void*() const noexcept {return this->p;};
-bool Pointer::operator ==(const Pointer& other) const noexcept {
+bstd::Pointer::Pointer(): p((void*)0) {};
+bstd::Pointer::Pointer(void* p): p(p) {};
+bstd::Pointer::operator volatile void*() const noexcept {return this->p;};
+bool bstd::Pointer::operator ==(const Pointer& other) const noexcept {
     return this->p == other.p;
 }
-bool Pointer::isNull() {return this->p == 0;};
-Pointer::operator void*() const noexcept {return this->p;};
+bool bstd::Pointer::isNull() {return this->p == 0;};
+bstd::Pointer::operator void*() const noexcept {return this->p;};
 #ifndef linx
-Pointer::operator PDWORD() const noexcept {return (PDWORD)this->p;};
+bstd::Pointer::operator PDWORD() const noexcept {return (PDWORD)this->p;};
 #endif
 
-Pointer alloc_mem(Pointer base, size_t size) {
+POINT alloc_mem(POINT base, size_t size) {
     #ifdef linx
 
     void* mem = mmap((void*)base, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
@@ -85,16 +86,16 @@ Pointer alloc_mem(Pointer base, size_t size) {
 
     #endif
 
-    return Pointer(mem);
+    return bstd::Pointer(mem);
 }
 
-Page alloc_page(Pointer base, PageSize size) {
+Page alloc_page(POINT base, PageSize size) {
     #ifdef linx
 
     void* mem = mmap((void*)base, (size_t)size, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANONYMOUS | (((size_t)size > 4096) ? (MAP_HUGETLB | ((size_t)size > 2097152 ? MAP_HUGE_1GB : MAP_HUGE_2MB)) : 0), -1, 0);
 
     Page page{
-        .location = Pointer(mem),
+        .location = bstd::Pointer(mem),
         .size = size
     };
 
@@ -107,7 +108,7 @@ Page alloc_page(Pointer base, PageSize size) {
     void* mem = VirtualAlloc((void*)base, (size_t)size, MEM_RESERVE | MEM_COMMIT | (((size_t)size > 4096) ? MEM_LARGE_PAGES : 0), PAGE_EXECUTE_READWRITE);
 
     Page page{
-        .location = Pointer(mem),
+        .location = bstd::Pointer(mem),
         .size = size
     };
 
@@ -116,23 +117,23 @@ Page alloc_page(Pointer base, PageSize size) {
     #endif
 }
 
-bool dealloc_mem(Pointer base, size_t len) {
+BOOL dealloc_mem(POINT base, size_t len) {
     #ifdef linx
 
     return munmap((void*)base, len) == 0;
 
     #else
 
-    return (bool)VirtualFree((void*)base, len, MEM_RELEASE | MEM_DECOMMIT);
+    return (BOOL)VirtualFree((void*)base, len, MEM_RELEASE | MEM_DECOMMIT);
 
     #endif
 }
 
-bool dealloc_page(const Page& page) {
+BOOL dealloc_page(const Page& page) {
     return dealloc_mem(page.location, (size_t)page.size);
 }
 
-bool protect_mem(Pointer base, size_t size, _MemProtect protect, _MemBehaviour behaviour, size_t *storePROT = 0, size_t *storeBEHAV = 0) {
+BOOL protect_mem(POINT base, size_t size, _MemProtect protect, _MemBehaviour behaviour, size_t *storePROT = 0, size_t *storeBEHAV = 0) {
     #ifdef linx
 
     size_t protection = 0;
@@ -187,15 +188,15 @@ bool protect_mem(Pointer base, size_t size, _MemProtect protect, _MemBehaviour b
 
     DWORD a = 0;
 
-    return (bool)VirtualProtect((void*)base, size, protection | behav, (PDWORD)&a);
+    return (BOOL)VirtualProtect((void*)base, size, protection | behav, (PDWORD)&a);
 
     #endif
 }
 
-bool protect_page(Page &page, _MemProtect protect, _MemBehaviour behaviour) {
+BOOL protect_page(Page &page, _MemProtect protect, _MemBehaviour behaviour) {
     size_t prot = 0;
     size_t behav = 0;
-    bool s = protect_mem(page.location, (size_t)page.size, protect, behaviour, &prot, &behav);
+    BOOL s = protect_mem(page.location, (size_t)page.size, protect, behaviour, &prot, &behav);
     page.prot = protect;
     page.behaviour = behaviour;
     

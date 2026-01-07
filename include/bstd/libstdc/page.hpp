@@ -2,25 +2,26 @@
 
 #include "memprot.hpp"
 #include "os.hpp"
+#include "conv.hpp"
 
-#ifndef linx
-#include <windows.h>
-#endif
+#define PDWORD bstd::PDWORD
 
-class Pointer {
-    public:
-            Pointer();
-            explicit Pointer(void* p);
-        explicit operator volatile void*() const noexcept;
-        explicit operator void*() const noexcept;
-        bool operator ==(const Pointer& other) const noexcept;
-        bool isNull();
-        #ifndef linx
-        explicit operator PDWORD() const noexcept;
-        #endif
-    private:
-        void* p;
-};
+namespace bstd {
+    class Pointer {
+        public:
+                Pointer();
+                explicit Pointer(void* p);
+            explicit operator volatile void*() const noexcept;
+            explicit operator void*() const noexcept;
+            bool operator ==(const Pointer& other) const noexcept;
+            bool isNull();
+            #ifndef linx
+            explicit operator PDWORD() const noexcept;
+            #endif
+        private:
+            void* p;
+    };
+}
 
 enum class PageSize {
     NORMAL = 4096,  // 4KiB
@@ -29,7 +30,7 @@ enum class PageSize {
 };
 
 struct Page {
-    Pointer location;
+    bstd::Pointer location;
     PageSize size;
     _MemProtect prot = MemProtect::READ | MemProtect::WRITE;
     _MemBehaviour behaviour = 0;
