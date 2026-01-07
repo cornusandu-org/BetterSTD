@@ -67,6 +67,7 @@ Additionally, some aliases for ease-of-use:
 * `cstring` -> `bstd::cstring` -> `char*`
 * `cstr` -> `cstring` -> `bstd::cstring` -> `char*`
 * `luint` -> `bstd::luint` -> `long unsigned int`
+* `uptr` -> `uintptr_t`
 
 > [!NOTE]
 > These lists may be expanded in the future, and aliases may change.
@@ -78,3 +79,6 @@ BetterSTD's `rand` headers provide:
 * `bstd::randint`: Random value in the range of [a, b]
 * `bstd::crypto::uniform`: Cryptographically-secure random value in the range of [0, 1]  (Not Implemented)
 * `bstd::crypto::randint`: Cryptographically-secure random value in the range of [a, b]  (Not Implemented)
+## bstd/sort
+BetterSTD's `sort` header provides:
+* `sort`: A multi-threaded implementation of quick sort, intended for really large arrays (>100 items)

@@ -40,3 +40,4 @@ using schar = i8;
 using cstring = bstd::cstring;
 using cstr = cstring;
 using luint = bstd::luint;
+using uptr = uintptr_t;
