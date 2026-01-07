@@ -1,6 +1,5 @@
-<div>
-<p style="font-size: 2.05rem; font-weight: 500; margin-bottom: 0;">BetterSTD</p>
-<p style="font-size: 1.4rem; font-weight: 400; margin-bottom: 0; color: var(--color-accent-fg)">An extension of the C++ Standard Library</p></div>
+# BetterSTD
+#### An extension of the C++ Standard Library
 
 ---
 
@@ -21,8 +20,6 @@ The `Pointer` class is a thin wrapper around `void*`.
 > [!CAUTION]
 > We advise against use of `Pointer` in normal code, unless the pointer of origin is, in itself, a `void*`.
 
-<p style="font-size: 0.7em">Note: This list may be expanded in the future, and aliases may change.</p>
-
 The `Page` class is a struct, containing relevant information about the page:
 ```cpp
 struct Page {
@@ -39,14 +36,16 @@ The MemProtect values (combine with `|`) are: `MemProtect::NONE`, `MemProtect::R
 
 The MemBehaviour values (combine with `|`) are: `MemBehaviour::NOCACHE`, `MemBehaviour::WRITECOMBINE`.
 
-> [!WARNING]  
+> [!CAUTION]  
 > `MemBehaviour::NOCACHE` and `MemBehaviour::WRITECOMBINE` can only be fully implemented on Windows, but are "simulated" on Linux via `madvise()`.
 
 You will also have top-level names **replacing** those of `windows.h` with cross-platform alternatives:
 * `POINT` -> `bstd::POINT` -> `bstd::Pointer`
 * `BOOL` -> `bstd::BOOL` -> `char`
 * `PDWORD` -> `bstd::PDWORD` -> `bstd::uint32_t*`  ->  `std::uint32_t*`
-<p style="font-size: 0.7em">Note: This list may be expanded in the future, and aliases may change.</p>
+
+> [!NOTE]
+> This list may be expanded in the future, and aliases may change.
 
 ## bstd/rand
 
