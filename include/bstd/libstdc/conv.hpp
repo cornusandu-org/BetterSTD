@@ -5,9 +5,10 @@
 namespace bstd {
     class Pointer;
 
+    typedef long unsigned int luint;
     typedef bstd::Pointer POINT;
     typedef std::uint32_t uint32_t;
-    typedef bstd::uint32_t* PDWORD;
+    typedef luint* PDWORD;
     typedef unsigned char uint8_t;
     typedef uint8_t BOOL;
     typedef char* cstring;
@@ -38,3 +39,4 @@ using sbyte = int8;
 using schar = i8;
 using cstring = bstd::cstring;
 using cstr = cstring;
+using luint = bstd::luint;

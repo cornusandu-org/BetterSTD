@@ -42,7 +42,7 @@ The MemBehaviour values (combine with `|`) are: `MemBehaviour::NOCACHE`, `MemBeh
 You will also have top-level names **replacing** those of `windows.h` with cross-platform alternatives:
 * `POINT` -> `bstd::POINT` -> `bstd::Pointer`
 * `BOOL` -> `bstd::BOOL` -> `bstd::uint8_t` -> `unsigned char`
-* `PDWORD` -> `bstd::PDWORD` -> `bstd::uint32_t*`  ->  `std::uint32_t*`
+* `PDWORD` -> `bstd::luint*` -> `long unsigned int*`
 
 Additionally, some aliases for ease-of-use:
 * `u8` -> `bstd::uint8_t` -> `unsigned char`
@@ -66,6 +66,7 @@ Additionally, some aliases for ease-of-use:
 * `schar` -> `i8` -> `int8` -> `signed char`
 * `cstring` -> `bstd::cstring` -> `char*`
 * `cstr` -> `cstring` -> `bstd::cstring` -> `char*`
+* `luint` -> `bstd::luint` -> `long unsigned int`
 
 > [!NOTE]
 > These lists may be expanded in the future, and aliases may change.
