@@ -1,5 +1,7 @@
-CC = g++
-CC_WIN = x86_64-w64-mingw32-g++  # Install if you dont have it; replace with g++ if youre on Windows
+# Building is recommended to be done on Linux (or WSL)
+
+CC = g++                         # Install if you don't have it; Replace with a Linunx version if youre on Windows
+CC_WIN = x86_64-w64-mingw32-g++  # Install if you dont have it; Replace with g++ if youre on Windows
 CAR = gcc-ar
 CXXFLAGS = -Wall -O0 -Iinclude/bstd -std=c++14 -Iinclude
 

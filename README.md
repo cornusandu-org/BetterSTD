@@ -41,11 +41,34 @@ The MemBehaviour values (combine with `|`) are: `MemBehaviour::NOCACHE`, `MemBeh
 
 You will also have top-level names **replacing** those of `windows.h` with cross-platform alternatives:
 * `POINT` -> `bstd::POINT` -> `bstd::Pointer`
-* `BOOL` -> `bstd::BOOL` -> `char`
+* `BOOL` -> `bstd::BOOL` -> `bstd::uint8_t` -> `unsigned char`
 * `PDWORD` -> `bstd::PDWORD` -> `bstd::uint32_t*`  ->  `std::uint32_t*`
 
+Additionally, some aliases for ease-of-use:
+* `u8` -> `bstd::uint8_t` -> `unsigned char`
+* `u16` -> `std::uint16_t`
+* `u32` -> `bstd::uint32_t` -> `std::uint32_t`
+* `u64` -> `std::uint64_t`
+* `int8` -> `signed char`
+* `int16` -> `std::int16_t`
+* `int32` -> `std::int32_t`
+* `int64` -> `std::int64_t`
+* `s8` -> `int8` -> `signed char`
+* `s16` -> `int16` -> `std::int16_t`
+* `s32` -> `int32` -> `std::int32_t`
+* `s64` -> `int64` -> `std::int64_t`
+* `i8` -> `int8` -> `signed char`
+* `i16` -> `int16` -> `std::int16_t`
+* `i32` -> `int32` -> `std::int32_t`
+* `i64` -> `int64` -> `std::int64_t`
+* `byte` -> `u8` -> `bstd::uint8_t` -> `unsigned char`
+* `sbyte` -> `int8` -> `signed char`
+* `schar` -> `i8` -> `int8` -> `signed char`
+* `cstring` -> `bstd::cstring` -> `char*`
+* `cstr` -> `cstring` -> `bstd::cstring` -> `char*`
+
 > [!NOTE]
-> This list may be expanded in the future, and aliases may change.
+> These lists may be expanded in the future, and aliases may change.
 
 ## bstd/rand
 
