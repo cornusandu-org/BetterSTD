@@ -1,3 +1,6 @@
 namespace bstd {
-    char printf(const char* fmt, ...);
+    void _putc(char);
+    void _puts(const char*);
+    char sprintf(void(*putc)(char), void(*puts)(const char*), const char* fmt, ...);
+    #define printf sprintf(::bstd::_putc, ::bstd::_puts
 }
