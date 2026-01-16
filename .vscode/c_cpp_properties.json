@@ -11,7 +11,7 @@
             "defines": [],
             "compilerPath": "/usr/bin/g++",
             "cStandard": "c17",
-            "cppStandard": "c++14",
+            "cppStandard": "gnu++23",
             "intelliSenseMode": "linux-gcc-x64",
             "compileCommands": "${workspaceFolder}/compile_commands.json",
             "configurationProvider": "ms-vscode.makefile-tools"
@@ -31,7 +31,7 @@
             ],
             "compilerPath": "/usr/bin/x86_64-w64-mingw32-g++",
             "cStandard": "c17",
-            "cppStandard": "c++14",
+            "cppStandard": "gnu++23",
             "intelliSenseMode": "windows-gcc-x64",
             "compileCommands": "${workspaceFolder}/compile_commands.json",
             "configurationProvider": "ms-vscode.makefile-tools"

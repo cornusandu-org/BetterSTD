@@ -3,7 +3,11 @@
 #include <cstring>
 #include <cstdint>
 #include <stdlib.h>
+#include <vector>
 #include "bstd/re_printf.hpp"
+#include "bstd/memory.hpp"
+
+using namespace bstd::mem;
 
 /* write one char */
 static void _putc(char c) {
@@ -42,11 +46,8 @@ static void c_itoa(intptr_t value, char* buf, int base) {
 
 /* minimal printf */
 namespace bstd {
-char sprintf(void(*putc)(char), void(*puts)(const char*), const char* fmt, ...) {
-    va_list ap;
-    va_start(ap, fmt);
-
-    char buf[32];
+char core_printf(void(*putc)(char), void(*puts)(const char*), const char* fmt, va_list ap) {
+    char buf[256];
 
     for (; *fmt; ++fmt) {
         if (*fmt != '%') {
@@ -106,6 +107,8 @@ char sprintf(void(*putc)(char), void(*puts)(const char*), const char* fmt, ...) 
                     buf[0] = '0';
                     buf[1] = 'x';
                     c_itoa(address, buf+2, 16);
+                } else {
+                    mempcpy(buf, "0x????????????", strlen("0x????????????"));
                 }
                 puts(buf);
                 break;
@@ -119,11 +122,38 @@ char sprintf(void(*putc)(char), void(*puts)(const char*), const char* fmt, ...) 
                 break;
         }
     
-        memcpy(buf, calloc(32, 1), 32);
+        memset(buf, 0, sizeof(buf));
     }
 
-    va_end(ap);
     return 0;
 }
+
+char printf(const char* fmt, ...) {
+    va_list ap;
+    va_start(ap, fmt);
+    char r = core_printf(::_putc, ::_puts, fmt, ap);
+    va_end(ap);
+    return r;
+}
+
+
+// APPARENTLY C++ (GNU) DOES NOT SUPPORT NESTED FUNCTIONS THROUGH TRAMPOLINES
+//char sprintf(char* buf, const char* fmt, ...) {
+//    va_list ap;
+//    va_start(ap, fmt);
+//    size_t counter = 0;
+//    void writecbuf(char a) {
+//        buf[counter] = a;
+//        buf[counter+1] = 0;
+//        counter++;
+//    }
+//    void writesbuf(char* a) {
+//        memcpy(buf+counter, a, strlen(a) + '\0');
+//        counter++;
+//    }
+//    char r = core_printf(writecbuf, writesbuf, fmt, ap);
+//    va_end(ap);
+//    return r;
+//}
 
 }

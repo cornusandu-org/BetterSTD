@@ -65,5 +65,7 @@ int main() {
         std::cout << "[ OK  ] " << t.name << std::endl;
     }
 
+    bstd::printf("Abcd");
+
     return 0;
 }
