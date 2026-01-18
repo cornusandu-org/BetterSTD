@@ -1,15 +1,13 @@
 #define HW_CACHE_SIZE 64
 #define HEAP_CACHE_SIZE 256
 
-#include "../include/bstd/libstdc/libstdc.hpp"
-#include "../include/bstd/libstdc/page.hpp"
 #include <thread>
 
-//static_assert(sizeof(void) == 1);
+#include "../include/bstd/libstdc/libstdc.hpp"
+#include "../include/bstd/libstdc/page.hpp"
+
 
 constexpr size_t HEAP_ALIGNMENT = 16;
-
-static_assert(HEAP_ALIGNMENT % 16 == 0);
 
 struct alignas(HW_CACHE_SIZE) CacheLine {
     void* base;
@@ -23,9 +21,15 @@ struct alignas(32) HeapChunk {
     HeapChunk* next;
 };
 
-HeapChunk start;
+HeapChunk alignas(64) start;
 
 char INIT_CALLED = 0;
+
+
+
+#include "asserts/heap.hpp"
+
+
 
 namespace bstd {
 namespace heap {
@@ -56,6 +60,15 @@ void merge_together(HeapChunk *start) {
     HeapChunk *last = nullptr;
 
     while (current->next) {
+        if (current->size == (size_t)PageSize::LARGE && current->available) {
+            if (last) {
+                Pointer loc = Pointer(current->base);
+                Page page = Page{.location=loc, .size=PageSize::LARGE, .prot=MemProtect::READ | MemProtect::WRITE, .behaviour=0};
+                dealloc_page(page);
+                last->next=current->next;
+                delete current;
+            }
+        }
         if (last) {
             if (last->available && current->available && (char*)last->base + last->size == (char*)current->base) {
                 last->size += current->size;
