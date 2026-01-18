@@ -68,6 +68,8 @@ Additionally, some aliases for ease-of-use:
 * `cstr` -> `cstring` -> `bstd::cstring` -> `char*`
 * `luint` -> `bstd::luint` -> `long unsigned int`
 * `uptr` -> `uintptr_t`
+* `qword_t` -> `u64` -> `std::uint64_t`
+* `sqword_t` -> `i64` -> `int64` -> `std::int64_t`
 
 > [!NOTE]
 > These lists may be expanded in the future, and aliases may change.

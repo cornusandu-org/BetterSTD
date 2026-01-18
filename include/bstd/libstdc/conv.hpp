@@ -41,3 +41,5 @@ using cstring = bstd::cstring;
 using cstr = cstring;
 using luint = bstd::luint;
 using uptr = uintptr_t;
+using qword_t = u64;
+using sqword_t = i64;
