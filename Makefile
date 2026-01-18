@@ -33,7 +33,14 @@ build:
 	@mv *.o tmp/
 
 devtest:
-	@$(CC) tests/test.cpp dist/bstd.a -Iinclude -o test -O0
+	@$(CC) tests/test.cpp dist/bstd_linux.a -Iinclude -o test -O0
+	
+	@if ./test; then \
+	    printf "\n\n\nTests succeeded/passed\n"; \
+	else \
+	    printf "\n\n\nTests failed\n"; \
+	    exit 1; \
+	fi
 
 clean:
 	@rm -f *.o
