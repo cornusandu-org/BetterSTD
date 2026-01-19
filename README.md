@@ -84,3 +84,5 @@ BetterSTD's `rand` headers provide:
 ## bstd/sort
 BetterSTD's `sort` header provides:
 * `sort`: A multi-threaded implementation of quick sort, intended for really large arrays (>100 items)
+<br>
+<p align="center">© Copyright 2025-2026 cornusandu, Licensed under the <b>MIT License</b></p>
