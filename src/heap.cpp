@@ -55,12 +55,12 @@ void init() {
     return;
 }
 
-void merge_together(HeapChunk *start) {
+void merge_together(HeapChunk *start, bool clear_available = true) {
     HeapChunk *current = start;
     HeapChunk *last = nullptr;
 
     while (current->next) {
-        if (current->size == (size_t)PageSize::LARGE && current->available) {
+        if (current->size == (size_t)PageSize::LARGE && current->available && clear_available) {
             if (last) {
                 Pointer loc = Pointer(current->base);
                 Page page = Page{.location=loc, .size=PageSize::LARGE, .prot=MemProtect::READ | MemProtect::WRITE, .behaviour=0};
@@ -110,7 +110,7 @@ void *alloc(size_t size) {
 
             current->next = new HeapChunk{.base = (void*)page.location, .size = (size_t)PageSize::LARGE, .available=1, .next=nullptr};
 
-            merge_together(&start);
+            merge_together(&start, false);
 
             current = &start;
         }
@@ -128,7 +128,7 @@ void dealloc(void* base) {
         current = current->next;
         if (!current) break;
     }
-    merge_together(&start);
+    merge_together(&start, true);
 }
 
 }}
