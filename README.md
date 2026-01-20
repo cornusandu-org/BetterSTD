@@ -77,12 +77,15 @@ Additionally, some aliases for ease-of-use:
 ## bstd/rand
 
 BetterSTD's `rand` headers provide:
-* `bstd::uniform`: Random value in the range of [0, 1]
-* `bstd::randint`: Random value in the range of [a, b]
-* `bstd::crypto::uniform`: Cryptographically-secure random value in the range of [0, 1]  (Not Implemented)
-* `bstd::crypto::randint`: Cryptographically-secure random value in the range of [a, b]  (Not Implemented)
+* ~~`bstd::random::uniform`: Random value in the range of [0, 1]~~ (deprecated)
+* ~~`bstd::random::randint`: Random value in the range of [a, b]~~ (deprecated)
+* `bstd::random::Generator`
+    * `double Generator::uniform()`: Random value in the range of [0, 1)
+    * `double* Generator::generate_batch(size_t count)`: Returns an array of `count` random values in the range of [0, 1)
+    * `size_t Generator::randint(size_t low, size_t high)`: Random value in the range of [low, high)
+
 ## bstd/sort
 BetterSTD's `sort` header provides:
-* `sort`: A multi-threaded implementation of quick sort, intended for really large arrays (>100 items)
+* `sort`: A multi-threaded implementation of quick sort, intended for really large arrays (>1024 items)
 <br>
 <p align="center">© Copyright 2025-2026 cornusandu, Licensed under the <b>MIT License</b></p>

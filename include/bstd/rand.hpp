@@ -1,17 +1,24 @@
 #pragma once
 #include <cstdint>
+#include <cstdlib>
 
 namespace bstd {
 namespace random {
 
     // Core RNG API
-    double uniform();
-    uint64_t randint(uint64_t min, uint64_t max);
+    [[deprecated]] double uniform();
+    [[deprecated]] uint64_t randint(uint64_t min, uint64_t max);
 
-    namespace crypto {
-        double uniform();
-        uint64_t randint(uint64_t min, uint64_t max);
-    }
+    class Generator {
+        public:
+            Generator();
+            double uniform();
+            double *generate_batch(size_t count);
+            size_t randint(size_t low, size_t high);
+            ~Generator() = default;
+        private:
+            size_t seed;
+    };
 
 } // namespace random
 } // namespace bstd
