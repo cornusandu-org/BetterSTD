@@ -149,7 +149,7 @@ BOOL protect_mem(POINT base, size_t size, _MemProtect protect, _MemBehaviour beh
     if (storePROT) *storePROT = protection;
     if (storeBEHAV) *storeBEHAV = behav;
 
-    return mprotect((void*)base, size, protection);
+    return mprotect((void*)base, size, protection) == 0;
 
     #else
 
@@ -190,7 +190,7 @@ BOOL protect_mem(POINT base, size_t size, _MemProtect protect, _MemBehaviour beh
 
     DWORD a = 0;
 
-    return (BOOL)VirtualProtect((void*)base, size, protection | behav, (PDWORD)&a);
+    return (BOOL)VirtualProtect((void*)base, size, protection | behav, (PDWORD)&a) != 0;
 
     #endif
 }
