@@ -5,6 +5,7 @@
 
 > [!IMPORTANT]  
 > BetterSTD is **not** a replacement for the default standard library, nor is it meant to be. It is simply an extension meant to be used alongside the standard library.
+<br>
 
 ## bstd/libstdc
 BetterSTD also provides some re-implementations of libstdc that aim to be cross-platform. These functions are:
@@ -73,6 +74,7 @@ Additionally, some aliases for ease-of-use:
 
 > [!NOTE]
 > These lists may be expanded in the future, and aliases may change.
+<br>
 
 ## bstd/rand
 
@@ -83,6 +85,7 @@ BetterSTD's `rand` headers provide:
     * `double Generator::uniform()`: Random value in the range of [0, 1)
     * `double* Generator::generate_batch(size_t count)`: Returns an array of `count` random values in the range of [0, 1)
     * `size_t Generator::randint(size_t low, size_t high)`: Random value in the range of [low, high)
+<br>
 
 ## bstd/sort
 BetterSTD's `sort` header provides:
