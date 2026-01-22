@@ -149,6 +149,8 @@ BOOL protect_mem(POINT base, size_t size, _MemProtect protect, _MemBehaviour beh
     if (storePROT) *storePROT = protection;
     if (storeBEHAV) *storeBEHAV = behav;
 
+    return mprotect((void*)base, size, protection);
+
     #else
 
     size_t protection = 0;
