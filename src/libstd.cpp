@@ -92,11 +92,13 @@ POINT alloc_mem(POINT base, size_t size) {
 Page alloc_page(POINT base, PageSize size) {
     #ifdef linx
 
-    void* mem = mmap((void*)base, (size_t)size, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANONYMOUS | (((size_t)size > 4096) ? (MAP_HUGETLB | ((size_t)size > 2097152 ? MAP_HUGE_1GB : MAP_HUGE_2MB)) : 0), -1, 0);
+    void* mem = mmap((void*)base, (size_t)size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | (((size_t)size > 4096) ? (MAP_HUGETLB | ((size_t)size > 2097152 ? MAP_HUGE_1GB : MAP_HUGE_2MB)) : 0), -1, 0);
 
     Page page{
         .location = bstd::Pointer(mem),
-        .size = size
+        .size = size,
+        .prot = MemProtect::READ | MemProtect::WRITE,
+        .behaviour = 0
     };
 
     return page;
@@ -105,11 +107,13 @@ Page alloc_page(POINT base, PageSize size) {
 
     EnableLargePages();
 
-    void* mem = VirtualAlloc((void*)base, (size_t)size, MEM_RESERVE | MEM_COMMIT | (((size_t)size > 4096) ? MEM_LARGE_PAGES : 0), PAGE_EXECUTE_READWRITE);
+    void* mem = VirtualAlloc((void*)base, (size_t)size, MEM_RESERVE | MEM_COMMIT | (((size_t)size > 4096) ? MEM_LARGE_PAGES : 0), PAGE_READWRITE);
 
     Page page{
         .location = bstd::Pointer(mem),
-        .size = size
+        .size = size,
+        .prot = MemProtect::READ | MemProtect::WRITE,
+        .behaviour = 0
     };
 
     return page;
@@ -134,10 +138,10 @@ BOOL dealloc_page(const Page& page) {
 }
 
 BOOL protect_mem(POINT base, size_t size, _MemProtect protect, _MemBehaviour behaviour, size_t *storePROT = 0, size_t *storeBEHAV = 0) {
-    #ifdef linx
-
     size_t protection = 0;
     size_t behav = 0;
+
+    #ifdef linx
 
     if (protect == MemProtect::NONE)             protection |= PROT_NONE;
     if (protect & MemProtect::READ)             protection |= PROT_READ;
@@ -150,9 +154,6 @@ BOOL protect_mem(POINT base, size_t size, _MemProtect protect, _MemBehaviour beh
     if (storeBEHAV) *storeBEHAV = behav;
 
     #else
-
-    size_t protection = 0;
-    size_t behav = 0;
 
     switch (protect) {
         case MemProtect::READ:
