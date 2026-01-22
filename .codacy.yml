@@ -1,0 +1,20 @@
+engines:
+  clang-tidy:
+    enabled: true
+    rules:
+      readability-identifier-naming:
+        enabled: true
+      cppcoreguidelines-*:
+        enabled: true
+      misc-*:
+        enabled: true
+      cert-*:
+        enabled: true
+      misra-*:
+        enabled: false
+
+  cppcheck:
+    enabled: true
+    rules:
+      misra-*:
+        enabled: false
