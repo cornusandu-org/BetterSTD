@@ -4,8 +4,8 @@
 
 namespace bstd {
 namespace heap {
-void init();
-void *alloc(size_t size);
-void dealloc(void* base);
+extern void init();
+extern void *alloc(size_t size);
+extern void dealloc(void* base);
 }
 }
