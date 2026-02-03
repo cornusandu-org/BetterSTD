@@ -1,0 +1,120 @@
+name: Release on commit directive
+
+on:
+  push:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect release commit
+        id: guard
+        run: |
+          if [[ "${{ github.event.head_commit.message }}" == Release:\ * ]]; then
+            echo "release=true" >> $GITHUB_OUTPUT
+          else
+            echo "release=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Stop if not a release commit
+        if: steps.guard.outputs.release != 'true'
+        run: exit 0
+
+      - name: Extract version, message, description
+        id: extract
+        run: |
+          version=$(cat VERSION)
+
+          raw_msg="${{ github.event.head_commit.message }}"
+          msg=$(echo "$raw_msg" | head -n1 | sed 's/^Release: //')
+          desc=$(echo "$raw_msg" | tail -n +2)
+
+          echo "version=$version" >> $GITHUB_OUTPUT
+
+          echo "msg<<EOF" >> $GITHUB_OUTPUT
+          echo "$msg" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+          echo "desc<<EOF" >> $GITHUB_OUTPUT
+          echo "$desc" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Find previous release commit
+        id: prev
+        run: |
+          prev=$(git log --grep='^Release: ' --format='%H' -n 2 | tail -n1)
+          echo "prev=$prev" >> $GITHUB_OUTPUT
+
+      - name: Generate commit summary
+        id: commits
+        run: |
+          if [ -n "${{ steps.prev.outputs.prev }}" ]; then
+            range="${{ steps.prev.outputs.prev }}..HEAD"
+          else
+            range="HEAD"
+          fi
+
+          git log $range --oneline > commits.txt
+
+          echo "commits<<EOF" >> $GITHUB_OUTPUT
+          cat commits.txt >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Generate full patch
+        id: patch
+        run: |
+          if [ -n "${{ steps.prev.outputs.prev }}" ]; then
+            range="${{ steps.prev.outputs.prev }}..HEAD"
+          else
+            range="HEAD"
+          fi
+
+          git format-patch $range \
+            --stdout \
+            --no-stat \
+            --no-signature \
+            > full.patch
+
+          echo "patch<<EOF" >> $GITHUB_OUTPUT
+          cat full.patch >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Build binaries
+        run: |
+          make
+          ls -la ./dist/bstd_linux.a ./dist/bstd_win.a
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}-${{ steps.extract.outputs.version }}
+          name: ${{ steps.extract.outputs.msg }}
+          body: |
+            ${{ steps.extract.outputs.desc }}
+
+            ---
+            ### Included commits
+            ```
+            ${{ steps.commits.outputs.commits }}
+            ```
+
+            <details>
+            <summary><strong>Full patch</strong></summary>
+
+            ```diff
+            ${{ steps.patch.outputs.patch }}
+            ```
+
+            </details>
+          files: |
+            dist/bstd_linux.a
+            dist/bstd_win.a
