@@ -30,7 +30,7 @@ jobs:
 
       - name: Stop if not a release commit
         if: steps.guard.outputs.release != 'true'
-        run: exit 0
+        run: exit 1
 
       - name: Extract version, message, description
         id: extract
