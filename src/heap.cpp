@@ -5,6 +5,7 @@
 
 #include "../include/bstd/libstdc/libstdc.hpp"
 #include "../include/bstd/libstdc/page.hpp"
+#include "../include/bstd/heap.hpp"
 
 
 constexpr size_t HEAP_ALIGNMENT = 16;
