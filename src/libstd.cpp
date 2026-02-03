@@ -40,6 +40,19 @@ BOOL EnableLargePages(void)
 
 #else
 #include <sys/mman.h>
+
+#ifndef MAP_HUGE_SHIFT
+#define MAP_HUGE_SHIFT 26
+#endif
+
+#ifndef MAP_HUGE_2MB
+#define MAP_HUGE_2MB (21 << MAP_HUGE_SHIFT)
+#endif
+
+#ifndef MAP_HUGE_1GB
+#define MAP_HUGE_1GB (30 << MAP_HUGE_SHIFT)
+#endif
+
 #endif
 
 //constexpr MemProtect operator|(MemProtect a, MemProtect b) noexcept
