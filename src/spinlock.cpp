@@ -8,10 +8,11 @@
 #include <format>
 
 // Macros
-#define SYNC __sync_synchronize()
+#define SYNC __sync_synchronize
 
 // Typedefs
 typedef unsigned char flag_t;
+typedef std::memory_order memory_order;
 
 // Classes and structs
 
@@ -30,10 +31,10 @@ struct spinlock_data {
 static std::thread::id get_id(void);
 
 // Global-scope variables
-static constexpr std::memory_order memory_order_write_scrict  = std::memory_order::seq_cst;
-static constexpr std::memory_order memory_order_all_strict    = std::memory_order::acq_rel;
-static constexpr std::memory_order memory_order_none_relaxed  = std::memory_order::relaxed;
-static constexpr std::memory_order memory_order_write_relaxed = std::memory_order::release;
+static constexpr memory_order memory_order_write_scrict  = memory_order::seq_cst;
+static constexpr memory_order memory_order_all_strict    = memory_order::acq_rel;
+static constexpr memory_order memory_order_none_relaxed  = memory_order::relaxed;
+static constexpr memory_order memory_order_write_relaxed = memory_order::release;
 
 static std::vector<std::unique_ptr<spinlock_data>> spinlocks;
 static spinlock_t next_id = 1;
@@ -48,11 +49,9 @@ static std::thread::id get_id(void) {
 static void acq_global_lock_i(void) {
     if (spinlock_access_lock.owner == get_id()) throw std::logic_error("attempted to acquire already-owned spinlock");
     flag_t expected = 0;
-    SYNC;
     while (!spinlock_access_lock.acquired.compare_exchange_weak(expected, 1, memory_order_write_scrict, memory_order_none_relaxed)) {
         expected = 0;
     }
-    SYNC;
     spinlock_access_lock.owner = get_id();
 }
 
@@ -60,10 +59,8 @@ static void rel_global_lock_i(void) {
     if (spinlock_access_lock.owner != get_id()) {
         throw std::logic_error("unlock by non-owner");
     }
-    SYNC;
     spinlock_access_lock.owner = std::thread::id{};
     spinlock_access_lock.acquired.store(0, memory_order_write_relaxed);
-    SYNC;
     return;
 }
 
