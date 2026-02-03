@@ -2,6 +2,9 @@ name: Release on commit directive
 
 on:
   push:
+    branches:
+      - main
+      - dev
 
 permissions:
   contents: write
