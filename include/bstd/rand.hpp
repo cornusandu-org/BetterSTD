@@ -12,9 +12,9 @@ namespace random {
     class Generator {
         public:
             Generator();
-            double uniform();
-            double *generate_batch(size_t count);
-            size_t randint(size_t low, size_t high);
+            double uniform() noexcept;
+            double *generate_batch(size_t count) noexcept;
+            size_t randint(size_t low, size_t high) noexcept;
             ~Generator() = default;
         private:
             size_t seed;

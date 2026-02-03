@@ -1,4 +1,7 @@
 #include <cstdlib>
+#include <exception>
+#include <string>
+#include <stdexcept>
 
 using spinlock_t = size_t;
 
